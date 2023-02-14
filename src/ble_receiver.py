@@ -49,13 +49,12 @@ async def run(address):
                     # print('\t\tdescription :', characteristic.description)
                     # ['write-without-response', 'write', 'read', 'notify']
                     # print('\t\tproperties :', characteristic.properties)
-                print('acc: ', end='')
+                print('acc | gyro:', end='')
                 for data in accList:
-                    print(data, ' ', end='')
+                    print(data, ', ', end='')
 
-                print('| gyro: ', end=' ')
                 for data in gyroList:
-                    print(data, ' ', end=' ')
+                    print(data, ', ', end='')
                 print()
 
     print('disconnect')
