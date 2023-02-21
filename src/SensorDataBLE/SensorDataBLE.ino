@@ -15,6 +15,7 @@ BLEShortCharacteristic accelerometerCharacteristic_Z("ffa3", BLERead | BLEBroadc
 BLEShortCharacteristic gyroscopeCharacteristic_X("ffb1", BLERead | BLEBroadcast);
 BLEShortCharacteristic gyroscopeCharacteristic_Y("ffb2", BLERead | BLEBroadcast);
 BLEShortCharacteristic gyroscopeCharacteristic_Z("ffb3", BLERead | BLEBroadcast);
+BLEShortCharacteristic temperatureCharacteristic("ffc1", BLERead | BLEBroadcast);
 
 
 void setup() {
@@ -29,12 +30,14 @@ void setup() {
   myService.addCharacteristic(gyroscopeCharacteristic_X);
   myService.addCharacteristic(gyroscopeCharacteristic_Y);
   myService.addCharacteristic(gyroscopeCharacteristic_Z);
+  myService.addCharacteristic(temperatureCharcteristic);
   accelerometerCharacteristic_X.writeValue(0);
   accelerometerCharacteristic_Y.writeValue(0);
   accelerometerCharacteristic_Z.writeValue(0);
   gyroscopeCharacteristic_X.writeValue(0);
   gyroscopeCharacteristic_Y.writeValue(0);
   gyroscopeCharacteristic_Z.writeValue(0);
+  temperatureCharacteristic.writeValue(0);
    
   BLE.addService(myService);
 
@@ -64,6 +67,7 @@ void loop() {
    int16_t gyroscope_X = round(myIMU.readFloatGyroX() * 100.0);
    int16_t gyroscope_Y = round(myIMU.readFloatGyroY() * 100.0);
    int16_t gyroscope_Z = round(myIMU.readFloatGyroZ() * 100.0);
+   int16_t temperature = round(myIMU.readTemperature() * 100.0);
 
    
    accelerometerCharacteristic_X.writeValue(accelerometer_X);
@@ -72,6 +76,7 @@ void loop() {
    gyroscopeCharacteristic_X.writeValue(gyroscope_X);
    gyroscopeCharacteristic_Y.writeValue(gyroscope_Y);
    gyroscopeCharacteristic_Z.writeValue(gyroscope_Z);
+   temperatureCharacteristic.writeValue(temperature);
 
 
 }

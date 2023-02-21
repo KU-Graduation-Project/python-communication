@@ -5,10 +5,9 @@ from datetime import datetime
 from bleak import BleakClient
 
 import numpy as np
-import tensorflow as tf
 from tensorflow import keras
 
-#AI 모델 불러오기
+# AI 모델 불러오기
 model = keras.models.load_model('lstm_ml_model.h5')
 
 # scan시 arduino라는 이름으로 인식될 수 있음
@@ -17,9 +16,9 @@ address = "E69FDBAC-4750-BF6F-0C68-5646E82D36E3"
 # 0000(****)-0000 부분의 UUID만 설정하면 됨(16bit->128bit 변환)
 accelerometerCharacteristic_X_uuid = "0000FFA1-0000-1000-8000-00805F9B34FB"
 
-#
+# 데이터 결과분석 주기
 count = 0
-test_data = np.array([])
+
 
 async def run(address):
     async with BleakClient(address) as client:
@@ -69,9 +68,9 @@ async def run(address):
 
                 arr = np.append(arr, accList, gyroList)
 
-                count+1
+                count + 1
 
-                if count > 3 :
+                if count > 3:
                     test_data = np.append(np.array(test_data), np.array(arr))
                     test_data = np.reshape(test_data, (3, 1, len(test_data)))
 
@@ -79,9 +78,11 @@ async def run(address):
                     np_class = np.argmax(model.predict(test_data), axis=1)
                     print(label[np_class[0]])
 
+                    test_data = np.array([[]])
+
                     count = 0
 
-    print('disconnect')
+print('disconnect')
 
 
 loop = asyncio.get_event_loop()
