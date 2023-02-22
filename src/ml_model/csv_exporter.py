@@ -1,3 +1,5 @@
+###Edge-Impulse에서 export한 json 데이터를 하나의 csv 파일로 만들어준다
+
 import json
 import glob
 from datetime import datetime

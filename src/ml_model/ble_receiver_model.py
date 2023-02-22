@@ -1,6 +1,5 @@
 import asyncio
 import time
-from array import array
 from datetime import datetime
 from bleak import BleakClient
 
@@ -57,10 +56,6 @@ async def run(address):
                     elif characteristic.uuid == '0000ffb3-0000-1000-8000-00805f9b34fb':
                         gyroList[2] = data
 
-                    # print('\t', characteristic)
-                    # print('\t\tdescription :', characteristic.description)
-                    # ['write-without-response', 'write', 'read', 'notify']
-                    # print('\t\tproperties :', characteristic.properties)
                 print('acc , gyro | ', end='')
                 for data in accList:
                     print(data, ' ', end='')
@@ -73,11 +68,11 @@ async def run(address):
                 count += 1
 
 
-                if count > 14:
+                if count > 7:
                     test_data = np.array(list)
                     test_data = np.reshape(test_data, (len(test_data), 1, 6))
 
-                    label = np.array(['idle', 'sit', 'standup'], dtype=object)
+                    label = np.array(['fallforward', 'idle', 'walk'], dtype=object)
                     np_class = np.argmax(model.predict(test_data), axis=1)
                     print('----------  ', label[np_class[0]], ' ----------')
 
