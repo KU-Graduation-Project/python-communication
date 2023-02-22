@@ -26,7 +26,6 @@ async def run(address):
         accList = [0, 0, 0]
         gyroList = [0, 0, 0]
         list = []
-        test_data = np.array([[]])
 
         # 데이터 결과분석 주기
         count = 0
@@ -37,7 +36,7 @@ async def run(address):
             # print('\tcharacteristic list:')
 
             while True:
-                time.sleep(0.5)
+                time.sleep(0.02)
                 now = datetime.now()
                 timestamp = now.strftime('%Y-%m-%d %H:%M:%S')
                 print(' ', timestamp, ' ', end='')
@@ -71,19 +70,17 @@ async def run(address):
                 print()
 
                 list.append(accList+gyroList)
-                print('list: ', list[count])
                 count += 1
 
 
-                if count > 2:
+                if count > 14:
                     test_data = np.array(list)
-                    test_data = np.reshape(test_data, (6, 1, len(test_data)))
+                    test_data = np.reshape(test_data, (len(test_data), 1, 6))
 
-                    label = array(['idle', 'sit', 'standup'], dtype=object)
+                    label = np.array(['idle', 'sit', 'standup'], dtype=object)
                     np_class = np.argmax(model.predict(test_data), axis=1)
-                    print(label[np_class[0]])
+                    print('----------  ', label[np_class[0]], ' ----------')
 
-                    test_data = np.array([[]])
                     list = []
                     count = 0
 
