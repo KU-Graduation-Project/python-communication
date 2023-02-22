@@ -31,7 +31,7 @@ void setup() {
   myService.addCharacteristic(gyroscopeCharacteristic_X);
   myService.addCharacteristic(gyroscopeCharacteristic_Y);
   myService.addCharacteristic(gyroscopeCharacteristic_Z);
-  myService.addCharacteristic(temperatureCharcteristic);
+  myService.addCharacteristic(temperatureCharacteristic);
   accelerometerCharacteristic_X.writeValue(0);
   accelerometerCharacteristic_Y.writeValue(0);
   accelerometerCharacteristic_Z.writeValue(0);
@@ -53,7 +53,7 @@ void loop() {
     digitalWrite(LED_BUILTIN, HIGH);
   }
 
-  const uint32_t BLE_UPDATE_INTERVAL = 10;
+  const uint32_t BLE_UPDATE_INTERVAL = 2;
   static uint32_t previousMillis = 0;
   uint32_t currentMillis = millis();
   
@@ -68,7 +68,7 @@ void loop() {
    int16_t gyroscope_X = round(myIMU.readFloatGyroX() * 100.0);
    int16_t gyroscope_Y = round(myIMU.readFloatGyroY() * 100.0);
    int16_t gyroscope_Z = round(myIMU.readFloatGyroZ() * 100.0);
-   int16_t temperature = round(myIMU.readTemperature() * 100.0);
+   int16_t temperature = round(myIMU.readTempC() * 100.0);
 
    
    accelerometerCharacteristic_X.writeValue(accelerometer_X);
