@@ -12,6 +12,7 @@ model = tf.keras.models.load_model("./lstm_model.h5", compile=False)
 
 # scan시 arduino라는 이름으로 인식될 수 있음
 address = "E69FDBAC-4750-BF6F-0C68-5646E82D36E3"
+#address = "6EDEA1BC-A96B-5850-FFB5-3510E2C47D2E"
 
 # 0000(****)-0000 부분의 UUID만 설정하면 됨(16bit->128bit 변환)
 accelerometerCharacteristic_X_uuid = "0000FFA1-0000-1000-8000-00805F9B34FB"
@@ -79,9 +80,8 @@ async def run(address):
                     list = []
                     count = 0
 
-print('disconnect')
-
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(run(address))
 print('done')
+print('disconnect')
