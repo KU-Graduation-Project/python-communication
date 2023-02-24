@@ -10,9 +10,12 @@ from tensorflow import keras
 # AI 모델 불러오기
 model = tf.keras.models.load_model("./lstm_model.h5", compile=False)
 
-# scan시 arduino라는 이름으로 인식될 수 있음
-address = "E69FDBAC-4750-BF6F-0C68-5646E82D36E3"
-#address = "6EDEA1BC-A96B-5850-FFB5-3510E2C47D2E"
+# scan시 Arduino라는 이름으로 인식될 수 있음
+# 배터리 없는 모델
+#address = "E69FDBAC-4750-BF6F-0C68-5646E82D36E3"
+
+#배터리 있는 모델
+address = "A69B7523-4CFB-77FA-3EED-B8626B9955C6"
 
 # 0000(****)-0000 부분의 UUID만 설정하면 됨(16bit->128bit 변환)
 accelerometerCharacteristic_X_uuid = "0000FFA1-0000-1000-8000-00805F9B34FB"
