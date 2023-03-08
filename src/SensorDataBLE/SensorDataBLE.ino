@@ -6,20 +6,29 @@
 #define CONVERT_TO_MS2    9.80665f
 #define MAX_ACCEPTED_RANGE  2.0f
 
+#define FREQUENCY_HZ        20
+#define INTERVAL_MS         (10000 / (FREQUENCY_HZ + 1))
+static unsigned long last_interval_ms = 0;     
+
 LSM6DS3 myIMU(I2C_MODE, 0x6A);
 static bool debug_nn = false;
 
-BLEService myService("fff0");
-BLEShortCharacteristic accelerometerCharacteristic_X("ffa1", BLERead | BLEBroadcast);
-BLEShortCharacteristic accelerometerCharacteristic_Y("ffa2", BLERead | BLEBroadcast);
-BLEShortCharacteristic accelerometerCharacteristic_Z("ffa3", BLERead | BLEBroadcast);
-BLEShortCharacteristic gyroscopeCharacteristic_X("ffb1", BLERead | BLEBroadcast);
-BLEShortCharacteristic gyroscopeCharacteristic_Y("ffb2", BLERead | BLEBroadcast);
-BLEShortCharacteristic gyroscopeCharacteristic_Z("ffb3", BLERead | BLEBroadcast);
-BLEShortCharacteristic temperatureCharacteristic("ffc1", BLERead | BLEBroadcast);
+BLEService myService("ffff");
+BLEShortCharacteristic accelerometerCharacteristic_X("ffa1", BLERead | BLEBroadcast | BLENotify);
+BLEShortCharacteristic accelerometerCharacteristic_Y("ffa2", BLERead | BLEBroadcast | BLENotify);
+BLEShortCharacteristic accelerometerCharacteristic_Z("ffa3", BLERead | BLEBroadcast | BLENotify);
+BLEShortCharacteristic gyroscopeCharacteristic_X("ffb1", BLERead | BLEBroadcast | BLENotify);
+BLEShortCharacteristic gyroscopeCharacteristic_Y("ffb2", BLERead | BLEBroadcast | BLENotify);
+BLEShortCharacteristic gyroscopeCharacteristic_Z("ffb3", BLERead | BLEBroadcast | BLENotify);
+BLEShortCharacteristic temperatureCharacteristic("ffc1", BLERead | BLEBroadcast | BLENotify);
+
+// Bluetooth® Low Energy Battery Level Characteristic
+BLEUnsignedCharCharacteristic batteryLevelCharacteristic("2A19", BLERead | BLEBroadcast | BLENotify);
 
 
 void setup() {
+  Serial.begin(9600);
+  
   BLE.begin();
   myIMU.begin();
 
@@ -32,6 +41,7 @@ void setup() {
   myService.addCharacteristic(gyroscopeCharacteristic_Y);
   myService.addCharacteristic(gyroscopeCharacteristic_Z);
   myService.addCharacteristic(temperatureCharacteristic);
+  myService.addCharacteristic(batteryLevelCharacteristic);
   accelerometerCharacteristic_X.writeValue(0);
   accelerometerCharacteristic_Y.writeValue(0);
   accelerometerCharacteristic_Z.writeValue(0);
@@ -39,6 +49,7 @@ void setup() {
   gyroscopeCharacteristic_Y.writeValue(0);
   gyroscopeCharacteristic_Z.writeValue(0);
   temperatureCharacteristic.writeValue(0);
+  batteryLevelCharacteristic.writeValue(0);
    
   BLE.addService(myService);
 
@@ -57,10 +68,12 @@ void loop() {
   static uint32_t previousMillis = 0;
   uint32_t currentMillis = millis();
   
-  if (currentMillis - previousMillis >= BLE_UPDATE_INTERVAL) {
-    previousMillis = currentMillis;
+
+   if (millis() > last_interval_ms + INTERVAL_MS) {
+    last_interval_ms = millis();
     BLE.poll();
   }
+
   
    int16_t accelerometer_X = round(myIMU.readFloatAccelX() * 100.0);
    int16_t accelerometer_Y = round(myIMU.readFloatAccelY() * 100.0);
@@ -70,14 +83,21 @@ void loop() {
    int16_t gyroscope_Z = round(myIMU.readFloatGyroZ() * 100.0);
    int16_t temperature = round(myIMU.readTempC() * 100.0);
 
-   
-   accelerometerCharacteristic_X.writeValue(accelerometer_X);
+   int battery = analogRead(A0);
+   int batteryLevel = map(battery, 0, 1023, 0, 100);
+
+
+   if(accelerometerCharacteristic_X.writeValue(accelerometer_X)){
+
+    Serial.println("BLE write");
+   }
    accelerometerCharacteristic_Y.writeValue(accelerometer_Y);
    accelerometerCharacteristic_Z.writeValue(accelerometer_Z);
    gyroscopeCharacteristic_X.writeValue(gyroscope_X);
    gyroscopeCharacteristic_Y.writeValue(gyroscope_Y);
    gyroscopeCharacteristic_Z.writeValue(gyroscope_Z);
    temperatureCharacteristic.writeValue(temperature);
+   batteryLevelCharacteristic.writeValue(batteryLevel);
 
 
 }
