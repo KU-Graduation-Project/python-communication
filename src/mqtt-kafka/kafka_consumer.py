@@ -22,8 +22,8 @@ class MessageConsumer:
 
         print(self.topic + " table created")
         sql = 'CREATE TABLE ' + self.topic + ' (timestamp datetime PRIMARY KEY, ' \
-                                             'g_x int(3), g_y int(3), g_z int(3), ' \
                                              'a_x int(3), a_y int(3), a_z int(3),' \
+                                             'g_x int(3), g_y int(3), g_z int(3), ' \
                                              'heartrate int(3), resp int(3), temp int(3))'
         self.cur.execute(sql)
         self.conn.commit()

@@ -5,7 +5,7 @@ from datetime import datetime
 from bleak import BleakClient
 
 # scan시 arduino라는 이름으로 인식될 수 있음
-address = "E69FDBAC-4750-BF6F-0C68-5646E82D36E3"
+address = "A69B7523-4CFB-77FA-3EED-B8626B9955C6"
 
 # 0000(****)-0000 부분의 UUID만 설정하면 됨(16bit->128bit 변환)
 accelerometerCharacteristic_X_uuid = "0000FFA1-0000-1000-8000-00805F9B34FB"
@@ -24,7 +24,7 @@ async def run(address):
             # print('\tcharacteristic list:')
 
             while True:
-                time.sleep(0.5)
+                #time.sleep(0.01)
                 now = datetime.now()
                 timestamp = now.strftime('%Y-%m-%d %H:%M:%S')
                 print(' ', timestamp, ' ', end='')

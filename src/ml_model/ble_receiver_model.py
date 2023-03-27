@@ -13,7 +13,6 @@ model = tf.keras.models.load_model("./lstm_model.h5", compile=False)
 # scan시 Arduino라는 이름으로 인식될 수 있음
 # 배터리 없는 모델
 #address = "E69FDBAC-4750-BF6F-0C68-5646E82D36E3"
-
 #배터리 있는 모델
 address = "A69B7523-4CFB-77FA-3EED-B8626B9955C6"
 
@@ -21,13 +20,19 @@ address = "A69B7523-4CFB-77FA-3EED-B8626B9955C6"
 accelerometerCharacteristic_X_uuid = "0000FFA1-0000-1000-8000-00805F9B34FB"
 
 
+#BLE notify로 보낸 데이터를 받는 콜백함수
+def notify_callback(sender: int, data: bytearray):
+    data = int.from_bytes(data)
+    return data
+    print('sender: ', sender, 'data: ', data)
+
+
 async def run(address):
     async with BleakClient(address) as client:
-        print('connected')
         services = await client.get_services()
 
-        accList = [0, 0, 0]
-        gyroList = [0, 0, 0]
+
+        dataList = [0, 0, 0, 0, 0, 0]
         list = []
 
         # 데이터 결과분석 주기
@@ -39,36 +44,39 @@ async def run(address):
             # print('\tcharacteristic list:')
 
             while True:
-                time.sleep(0.02)
+                #time.sleep(0.01)
                 now = datetime.now()
                 timestamp = now.strftime('%Y-%m-%d %H:%M:%S')
                 print(' ', timestamp, ' ', end='')
                 for characteristic in service.characteristics:
-                    data = int.from_bytes(await client.read_gatt_char(characteristic.uuid), byteorder='little',
-                                          signed=True)
+                    await client.start_notify(characteristic, notify_callback)
+                    data = int.from_bytes(await client.read_gatt_char(characteristic.uuid),
+                         byteorder='little', signed=True)
+                    #data = int.from_bytes(await client.start_notify(characteristic, notify_callback),
+                         #byteorder='little', signed=True)
+
                     if characteristic.uuid == '0000ffa1-0000-1000-8000-00805f9b34fb':
                         # characteristic uuid로 데이터 읽기(characteristic 속성에 read가 존재해야 가능)
-                        accList[0] = data
+                        dataList[0] = data
                     elif characteristic.uuid == '0000ffa2-0000-1000-8000-00805f9b34fb':
-                        accList[1] = data
+                        dataList[1] = data
                     elif characteristic.uuid == '0000ffa3-0000-1000-8000-00805f9b34fb':
-                        accList[2] = data
+                        dataList[2] = data
                     elif characteristic.uuid == '0000ffb1-0000-1000-8000-00805f9b34fb':
-                        gyroList[0] = data
+                        dataList[3] = data
                     elif characteristic.uuid == '0000ffb2-0000-1000-8000-00805f9b34fb':
-                        gyroList[1] = data
+                        dataList[4] = data
                     elif characteristic.uuid == '0000ffb3-0000-1000-8000-00805f9b34fb':
-                        gyroList[2] = data
+                        dataList[5] = data
+
 
                 print('acc , gyro | ', end='')
-                for data in accList:
-                    print(data, ' ', end='')
+                for data in dataList:
+                    print(data, ' ', end=' ')
 
-                for data in gyroList:
-                    print(data, ' ', end='')
                 print()
 
-                list.append(accList+gyroList)
+                list.append(dataList)
                 count += 1
 
 
@@ -82,7 +90,6 @@ async def run(address):
 
                     list = []
                     count = 0
-
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(run(address))

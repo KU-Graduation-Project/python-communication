@@ -1,0 +1,12 @@
+{
+    "version": 1,
+    "config": {
+        "edgeimpulse.com": {
+            "name": "LSTM_model",
+            "type": "transferLearning",
+            "description": "keras lstm model",
+            "organizationId": 20151,
+            "tlOperatesOn": "other"
+        }
+    }
+}

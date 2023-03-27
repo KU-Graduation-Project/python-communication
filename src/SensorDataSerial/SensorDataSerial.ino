@@ -40,6 +40,7 @@ void loop() {
     Serial.print(myIMU.readFloatGyroY() * CONVERT_TO_MS2,4);
     Serial.print('\t');
     Serial.print(myIMU.readFloatGyroZ() * CONVERT_TO_MS2,4);
+    //Serial.print(myIMU.readFloatGyroZ() * CONVERT_TO_MS2,4);
     Serial.print('\t');                                
 
     //Thermometer

@@ -100,7 +100,7 @@ async def run(address):
                     random_string = ""  # 결과 값
                     for i in range(_LENGTH):
                         random_string += random.choice(string_pool)
-                    file_path = "./data/"+"walk."+random_string+".json"
+                    file_path = "./data/"+"idle."+random_string+".json"
                     with open(file_path, "w") as outfile:
                         outfile.write(encoded)
 
