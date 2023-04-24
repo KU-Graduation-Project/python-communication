@@ -117,13 +117,13 @@ void loop() {
     
     if(0.1 < result.classification[0].value && result.classification[0].value < 0.5){
       //LeftRight
-      ei_printf("---- LeftRight ----");
+      ei_printf("---- fallforward ----");
       myCharacteristic.writeValue(0101);
       BLE.advertise();
       delay(1000);
     }else if(result.classification[1].value > 0.87891){
       //UpDown
-      ei_printf("----- UpDown  -----");
+      ei_printf("----- sit/standup  -----");
       myCharacteristic.writeValue(4321);
       BLE.advertise();
       delay(1000);      
